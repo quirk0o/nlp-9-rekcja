@@ -3,7 +3,7 @@ import re
 
 
 def split_into_sentences(text):
-    return [s for s in re.split(r'[.;]', text) if len(s) > 0]
+    return [s for s in re.split(r'[.?!;]', text) if len(s) > 0]
 
 
 def remove_special_chars(text):

@@ -27,7 +27,7 @@ def is_noun(word):
 def is_prexp(word):
     ids = p.rec(word)
     noun = [p.label(id)[0] == PLP.CZESCI_MOWY.LICZEBNIK or
-            p.label(id)[0] == PLP.CZESCI_MOWY.PRZYSLOWEK or
+            p.label(id)[0] == PLP.CZESCI_MOWY.PRZYMIOTNIK or
             p.label(id)[0] == PLP.CZESCI_MOWY.ZAIMEK for id in ids]
     return any(noun)
 
@@ -59,11 +59,11 @@ if __name__ == '__main__':
                     expression = []
                     noun = None
                     for j in xrange(i + 1, len(sentence)):
-                        if is_noun(sentence[j]):
+                        if is_prexp(sentence[j]):
+                            expression.append(sentence[j])
+                        elif is_noun(sentence[j]):
                             expression.append(sentence[j])
                             break
-                        elif is_prexp(sentence[j]):
-                            expression.append(sentence[j])
                         else:
                             break
                     if len(expression) == 0:
@@ -86,10 +86,12 @@ if __name__ == '__main__':
     for p in prepositions:
         for case in preposition_cases[p]:
             preposition_cases[p][case] /= occurences[p]
+        del preposition_cases[p][u'wołacz']
+        del preposition_cases[p][u'mianownik']
         for case, count in preposition_cases[p].items():
             if count < 0.15:
                 del preposition_cases[p][case]
 
         print p
-        for case, count in preposition_cases[p].items():
-            print case, count
+        for case in sorted(preposition_cases[p], key=preposition_cases[p].get, reverse=True):
+            print case, preposition_cases[p][case]
